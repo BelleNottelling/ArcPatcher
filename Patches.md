@@ -5,9 +5,6 @@
 ### Labeled x-axis
 Adds ticks to the x-axis that includes the tempature.
 #### Known issues 
- - Causes the overall size of the chart to shrink slightly.
- - Looks a bit odd
-
 Edit `C:\Program Files\Intel\Intel Arc Control\resource\js\chart_configs\charts.js`and replace
 ```JS
             x: {
@@ -30,12 +27,15 @@ with
                 ticks: {
                     color: energyBlue,
                     callback: function(value, index, values) {
+                        if (!Number.isInteger(value)) {
+                            return "";
+                        }
+
                         return (value * 15) + 25 + "°C";
                     },
                     padding: 0, 
                     font: {
-                        size: 15,
-                        family: "IntelOneDisplay-en",
+                        size: 14,
                     },
                     color: "#FFFFFF",
                 },
@@ -48,6 +48,42 @@ And under `C:\Program Files\Intel\Intel Arc Control\resource\js\pages\performanc
 ```JS
 document.getElementById('fan-graph-x-max').innerHTML = 100 + getTranslationFromId('units-celsius');
 document.getElementById('fan-graph-x-min').innerHTML = 25 + getTranslationFromId('units-celsius');
+```
+and edit `C:\Program Files\Intel\Intel Arc Control\resource\index.html`
+Replace
+```HTML
+<div id="fan-speed-graph-container">
+    <div id="fan-speed-graph-blockout"></div>
+    <canvas id="fan-speed-graph-dragable"
+    height="100"
+    width="527"
+    style="display: block; box-sizing: border-box; height: 100px; width: 527px; touch-action: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); transform: translateZ(10px);"></canvas>
+</div>
+```
+With
+```HTML
+<div id="fan-speed-graph-container">
+    <canvas id="fan-speed-graph-dragable"
+    height="100"
+    width="527"
+    style="display: block; box-sizing: border-box; height: 125px; width: 527px; touch-action: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); transform: translateZ(10px);"></canvas>
+</div>
+```
+and `C:\Program Files\Intel\Intel Arc Control\resource\css\performance.css`
+```CSS
+#fan-speed-graph-container {
+    width: 100%;
+    height: 100px;
+    position: relative;
+}
+```
+With
+```CSS
+#fan-speed-graph-container {
+    width: 100%;
+    height: 125px;
+    position: relative;
+}
 ```
 ## Notifications
 
