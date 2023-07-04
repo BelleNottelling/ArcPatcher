@@ -13,9 +13,13 @@ import (
 var indexHtml = "C:\\Program Files\\Intel\\Intel Arc Control\\resource\\index.html"
 var fanChartConfig = "C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\chart_configs\\charts.js"
 var performanceTurningJS = "C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\pages\\performance\\performance_tuning.js"
+var updatesJS = "C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\pages\\drivers\\updates.js"
+var overlayJS = "C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\overlay.js"
 
 func main() {
 	err := betterFanControl()
+	removeDriverTimeoutNotification()
+	minimalOverlayJS()
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -106,6 +110,46 @@ func betterFanControl() error {
 	modifiedchartJSConf := re.ReplaceAllString(string(chartJSConf), replacement)
 
 	err = os.WriteFile(fanChartConfig, []byte(modifiedchartJSConf), 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func removeDriverTimeoutNotification() error {
+	updatesJSContent, err := os.ReadFile(updatesJS)
+	if err != nil {
+		return err
+	}
+
+	pattern := `showToast\({\s*type: notificationTypes.error,\s*toggleType: notificationToggleTypes.notification_driver_info,\s*mainMessageId: 'main-drivers',\s*secondaryMessageId: 'drivers-checking-for-updates-timeout',\s*}\);`
+
+	// Perform the replacement using regular expressions
+	re := regexp.MustCompile(pattern)
+	modifiedUpdatesJS := re.ReplaceAllString(string(updatesJSContent), "")
+
+	err = os.WriteFile(updatesJS, []byte(modifiedUpdatesJS), 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func minimalOverlayJS() error {
+	content, err := os.ReadFile(overlayJS)
+	if err != nil {
+		return err
+	}
+
+	pattern := `<li\s*id="\${setting\?\.settingId}-wrapper"\s*class="\${hidden\s*\?\s*'is-hidden'\s*:\s*''}">`
+
+	// Perform the replacement using regular expressions
+	re := regexp.MustCompile(pattern)
+	modifiedUpdatesJS := re.ReplaceAllString(string(content), `<li id="${setting?.settingId}-wrapper" class="${hidden ? 'is-hidden' : ''}" style="margin: 0; padding: 0.25em;">`)
+
+	err = os.WriteFile(overlayJS, []byte(modifiedUpdatesJS), 0644)
 	if err != nil {
 		return err
 	}
