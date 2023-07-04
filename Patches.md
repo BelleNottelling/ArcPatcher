@@ -4,7 +4,6 @@
 
 ### Labeled x-axis
 Adds ticks to the x-axis that includes the tempature.
-#### Known issues 
 Edit `C:\Program Files\Intel\Intel Arc Control\resource\js\chart_configs\charts.js`and replace
 ```JS
             x: {
@@ -64,27 +63,12 @@ With
 ```HTML
 <div id="fan-speed-graph-container">
     <canvas id="fan-speed-graph-dragable"
-    height="100"
+    height="125"
     width="527"
     style="display: block; box-sizing: border-box; height: 125px; width: 527px; touch-action: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); transform: translateZ(10px);"></canvas>
 </div>
 ```
-and `C:\Program Files\Intel\Intel Arc Control\resource\css\performance.css`
-```CSS
-#fan-speed-graph-container {
-    width: 100%;
-    height: 100px;
-    position: relative;
-}
-```
-With
-```CSS
-#fan-speed-graph-container {
-    width: 100%;
-    height: 125px;
-    position: relative;
-}
-```
+
 ## Notifications
 
 ### Disable driver update check timeout
