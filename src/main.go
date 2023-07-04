@@ -10,11 +10,13 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-var indexHtml = "C:\\Program Files\\Intel\\Intel Arc Control\\resource\\index.html"
-var fanChartConfig = "C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\chart_configs\\charts.js"
-var performanceTurningJS = "C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\pages\\performance\\performance_tuning.js"
-var updatesJS = "C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\pages\\drivers\\updates.js"
-var overlayJS = "C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\overlay.js"
+var (
+	indexHtml            = "C:\\Program Files\\Intel\\Intel Arc Control\\resource\\index.html"
+	fanChartConfig       = "C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\chart_configs\\charts.js"
+	performanceTurningJS = "C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\pages\\performance\\performance_tuning.js"
+	updatesJS            = "C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\pages\\drivers\\updates.js"
+	overlayJS            = "C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\overlay.js"
+)
 
 func main() {
 	err := betterFanControl()
@@ -74,7 +76,7 @@ func betterFanControl() error {
 		return err
 	}
 
-	// Finally update the x-axis config for Chart.JS to includ the ticks with the tempatures
+	// Finally update the x-axis config for Chart.JS to include the ticks with the temperatures
 	chartJSConf, err := os.ReadFile(fanChartConfig)
 	if err != nil {
 		return err
@@ -147,9 +149,9 @@ func minimalOverlayJS() error {
 
 	// Perform the replacement using regular expressions
 	re := regexp.MustCompile(pattern)
-	modifiedUpdatesJS := re.ReplaceAllString(string(content), `<li id="${setting?.settingId}-wrapper" class="${hidden ? 'is-hidden' : ''}" style="margin: 0; padding: 0.25em;">`)
+	modifiedOverlayJS := re.ReplaceAllString(string(content), `<li id="${setting?.settingId}-wrapper" class="${hidden ? 'is-hidden' : ''}" style="margin: 0; padding: 0.25em;">`)
 
-	err = os.WriteFile(overlayJS, []byte(modifiedUpdatesJS), 0644)
+	err = os.WriteFile(overlayJS, []byte(modifiedOverlayJS), 0644)
 	if err != nil {
 		return err
 	}
