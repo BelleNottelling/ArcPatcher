@@ -18,30 +18,31 @@ Edit `C:\Program Files\Intel\Intel Arc Control\resource\js\chart_configs\charts.
 ```
 with
 ```JS
-            x: {
-                display: true,
-                grid: {
-                    display: false,
-                },
-                ticks: {
-                    color: energyBlue,
-                    callback: function(value, index, values) {
-                        if (!Number.isInteger(value)) {
-                            return "";
-                        }
-
-                        return (value * 15) + 25 + "°C";
-                    },
-                    padding: 0, 
-                    font: {
-                        size: 14,
-                    },
-                    color: "#FFFFFF",
-                },
-                scaleLabel: {
-                    display: true,
-                },
-            },
+x: {
+        display: true,
+        grid: {
+          display: false,
+        },
+        ticks: {
+          color: energyBlue,
+          callback: function (value, index, values) {
+            if (!Number.isInteger(value)) {
+              return "";
+            }
+            length = isEmpty(activeOverclockingSettings()?.fan_speed_table) ? 12 : activeOverclockingSettings()?.fan_speed_table?.length;
+            interval = 75 / (length - 1);
+            return Math.round((value * interval + 25) * 2) / 2 + "°C";
+          },
+          padding: 0,
+          font: {
+            size: 14,
+          },
+          color: "#FFFFFF",
+        },
+        scaleLabel: {
+          display: true,
+        },
+      },
 ```
 And under `C:\Program Files\Intel\Intel Arc Control\resource\js\pages\performance\performance_tuning.js` delete
 ```JS
