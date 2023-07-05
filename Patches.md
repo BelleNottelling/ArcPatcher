@@ -1,9 +1,9 @@
 # Patches I've Created so far.
 
-## Fan control
+## Performance tuning
 
-### Labeled x-axis
-Adds ticks to the x-axis that includes the tempature.
+### Better fan control
+Adds ticks to the x-axis that includes the tempature, increases the size, and adds additional curve points.
 Edit `C:\Program Files\Intel\Intel Arc Control\resource\js\chart_configs\charts.js`and replace
 ```JS
             x: {
@@ -44,12 +44,26 @@ x: {
         },
       },
 ```
-And under `C:\Program Files\Intel\Intel Arc Control\resource\js\pages\performance\performance_tuning.js` delete
+And under `C:\Program Files\Intel\Intel Arc Control\resource\js\pages\performance\performance_tuning.js`
+delete
 ```JS
 document.getElementById('fan-graph-x-max').innerHTML = 100 + getTranslationFromId('units-celsius');
 document.getElementById('fan-graph-x-min').innerHTML = 25 + getTranslationFromId('units-celsius');
 ```
-and edit `C:\Program Files\Intel\Intel Arc Control\resource\index.html`
+repalce 
+```JS
+if (isEmpty(activeOverclockingSettings()?.fan_speed_table)) {
+    activeOverclockingSettings().fan_speed_table = [30, 30, 40, 55, 75, 90];
+}
+```
+with
+```JS
+if (isEmpty(activeOverclockingSettings()?.fan_speed_table) || activeOverclockingSettings()?.fan_speed_table?.length <= 6) {
+    activeOverclockingSettings().fan_speed_table = [30, 30, 30, 30, 30, 55, 65, 75, 82.5, 90]; //[30, 30, 40, 55, 75, 90]
+}
+```
+
+Finally edit `C:\Program Files\Intel\Intel Arc Control\resource\index.html`
 Replace
 ```HTML
 <div id="fan-speed-graph-container">
@@ -68,6 +82,37 @@ With
     width="527"
     style="display: block; box-sizing: border-box; height: 125px; width: 527px; touch-action: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); transform: translateZ(10px);"></canvas>
 </div>
+```
+
+### Performance Boost Show Mhz
+
+Edit `C:\Program Files\Intel\Intel Arc Control\resource\js\pages\performance\performance_tuning.js`
+Replace
+```JS
+visible: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.bSupported,
+        
+range: {
+    normalize: true,
+    min: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.min,
+    max: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.max,
+    step: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.step,
+    defaultValue: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.default,
+    units: null,
+}
+```
+with
+```JS
+visible: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.bSupported,
+showPosNeg: true,
+        
+range: {
+    normalize: false,
+    min: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.min,
+    max: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.max,
+    step: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.step,
+    defaultValue: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.default,\
+    units: 'units-mhz',
+}
 ```
 
 ## Notifications
