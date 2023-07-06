@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"os"
+
+	"github.com/fatih/color"
 )
 
 var (
@@ -14,6 +17,7 @@ var (
 )
 
 var availablePatches = []string{
+	"Restore backup",
 	"Improved fan control",
 	"Remove driver update timeout notification",
 	"Minimal overlay",
@@ -21,6 +25,19 @@ var availablePatches = []string{
 }
 
 func main() {
+	if _, err := os.Stat("backup.zip"); err != nil {
+		fmt.Println("Backup doesn't exist yet, creating now.")
+		err = createBackup()
+
+		if err != nil {
+			coloredOutput(`error`, `An error occured when creating a backup:`, nil)
+		} else {
+			coloredOutput(`good`, `Successfully created a backup.`, nil)
+		}
+	} else {
+		coloredOutput(`good`, `Backup already exists, skipping backup step.`, nil)
+	}
+
 promt:
 	selection, err := promtOptions()
 	if err != nil {
@@ -32,17 +49,19 @@ promt:
 
 	switch selection {
 	case 1:
-		err = betterFanControl()
+		err = restoreBackup()
 	case 2:
-		err = removeDriverTimeoutNotification()
+		err = betterFanControl()
 	case 3:
+		err = removeDriverTimeoutNotification()
+	case 4:
 		err = patchMinimalOverlay()
 	default:
-		fmt.Println("Unknown option selected.")
+		coloredOutput(`warning`, `Unknown option selected.`, nil)
 	}
 
 	if err != nil {
-		fmt.Println("Error:", err)
+		coloredOutput(`error`, `Error:`, err)
 	}
 
 	goto promt
@@ -65,4 +84,24 @@ func promtOptions() (int, error) {
 	}
 
 	return choice, nil
+}
+
+func coloredOutput(outputType string, message string, err error) {
+	var d *color.Color
+	switch outputType {
+	case `error`:
+		d = color.New(color.FgRed, color.Bold)
+	case `warning`:
+		d = color.New(color.FgYellow, color.Bold)
+	case `good`:
+		d = color.New(color.FgGreen, color.Bold)
+	default:
+		d = color.New(color.FgYellow, color.Bold)
+	}
+
+	if err == nil {
+		d.Println(message)
+	} else {
+		d.Println(message, err)
+	}
 }
