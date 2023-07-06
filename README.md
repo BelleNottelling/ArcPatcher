@@ -15,9 +15,9 @@ A handy utility to patch Intel's "Arc Control" to make it better.
 
 
 ## Usage
-1. Download the [latest release](https://github.com/BelleNottelling/ArcPatcher/releases), extract the archive, and then run `ArchPatcher.exe` as administrator.
-	a. ArcPatcher will automatically create a backup of the directory that it will modify.
-2. Exit Arc Control entirely. (`Task bar` -> `hidden icons` -> right click `Arc Control` -> `Quit Arc Control`)
+1. Exit Arc Control entirely. (`Task bar` -> `hidden icons` -> right click `Arc Control` -> `Quit Arc Control`)
+2. Download the [latest release](https://github.com/BelleNottelling/ArcPatcher/releases), extract the archive, and then run `ArchPatcher.exe` as administrator.
+	a. ArcPatcher will automatically create a backup of the directory that it will modify. 
 3. From there you will be presented with a list of available patches, simply enter the number associated with the patch you'd like to apply.
 4. Re-launch Arc Control and enjoy the patches!
 

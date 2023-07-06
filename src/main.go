@@ -4,17 +4,23 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/bi-zone/go-fileversion"
 	"github.com/fatih/color"
+	"golang.org/x/exp/slices"
 )
 
 var (
 	indexHtml           = `C:\Program Files\Intel\Intel Arc Control\resource\index.html`
 	overlayHtml         = `C:\Program Files\Intel\Intel Arc Control\resource\overlay.html`
-	fanChartConfig      = `C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\chart_configs\\charts.js`
-	performanceTuningJS = `C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\pages\\performance\\performance_tuning.js`
-	updatesJS           = `C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\pages\\drivers\\updates.js`
-	overlayJS           = `C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\overlay.js`
+	fanChartConfig      = `C:\Program Files\Intel\\Intel Arc Control\resource\js\chart_configs\charts.js`
+	performanceTuningJS = `C:\Program Files\Intel\\Intel Arc Control\resource\js\pages\performance\performance_tuning.js`
+	updatesJS           = `C:\Program Files\Intel\\Intel Arc Control\resource\js\pages\drivers\updates.js`
+	overlayJS           = `C:\Program Files\Intel\\Intel Arc Control\resource\js\overlay.js`
 )
+
+var testedArcControlVersions = []string{
+	`1.69.5033.3`,
+}
 
 var availablePatches = []string{
 	"Restore backup",
@@ -37,6 +43,8 @@ func main() {
 	} else {
 		coloredOutput(`warning`, `Backup already exists, skipping backup step.`, nil)
 	}
+
+	checkArControlVersion()
 
 promt:
 	selection, err := promtOptions()
@@ -108,5 +116,19 @@ func coloredOutput(outputType string, message string, err error) {
 		d.Println(message)
 	} else {
 		d.Println(message, err)
+	}
+}
+
+func checkArControlVersion() {
+	f, err := fileversion.New(`C:\Program Files\Intel\Intel Arc Control\ArcControl.exe`)
+	if err != nil {
+		coloredOutput("error", "Unable to read your Arc Control version", err)
+		return
+	}
+
+	if slices.Contains(testedArcControlVersions, f.FileVersion()) {
+		coloredOutput("good", "Your version of Arc Control has been tested with ArcPatcher", nil)
+	} else {
+		coloredOutput("warning", "Your version of Arc Control has not been tested with ArcPatcher", nil)
 	}
 }
