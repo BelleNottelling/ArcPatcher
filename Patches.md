@@ -3,6 +3,7 @@
 ## Performance tuning
 
 ### Better fan control
+
 Adds ticks to the x-axis that includes the tempature, increases the size, and adds additional curve points.
 Edit `C:\Program Files\Intel\Intel Arc Control\resource\js\chart_configs\charts.js`and replace
 ```JS
@@ -110,7 +111,7 @@ range: {
     min: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.min,
     max: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.max,
     step: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.step,
-    defaultValue: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.default,\
+    defaultValue: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.default,
     units: 'units-mhz',
 }
 ```
@@ -131,7 +132,9 @@ Delete this, but keep the `checkingForUpdates = false;` part.
         });
 ```
 
-## Minimal overlay
+## Overlay
+
+## Minimal Overaly
 Edit `C:\Program Files\Intel\Intel Arc Control\resource\js\overlay.js`
 Change
 ```JS
@@ -152,4 +155,12 @@ to
                     <span class="unit translatable" id="${setting?.units}">FPS</span>
                 </div>
             </li>`;
+```
+
+Edit `C:\Program Files\Intel\Intel Arc Control\resource\overlay.html`
+Delete
+```HTML
+<div class="header">
+    <div id="intel-performance-telemetry" class="left translatable">Intel&reg; Performance Telemetry</div>
+</div>
 ```
