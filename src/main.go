@@ -3,10 +3,13 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
+	"syscall"
 
 	"github.com/bi-zone/go-fileversion"
 	"github.com/fatih/color"
 	"golang.org/x/exp/slices"
+	"golang.org/x/sys/windows"
 )
 
 var (
@@ -31,6 +34,8 @@ var availablePatches = []string{
 }
 
 func main() {
+	escalateIfNotAdmin()
+
 	if _, err := os.Stat("backup.zip"); err != nil {
 		fmt.Println("Backup doesn't exist yet, creating now.")
 		err = createBackup()
@@ -81,7 +86,7 @@ promt:
 }
 
 func promtOptions() (int, error) {
-	fmt.Println("Available patches: ")
+	fmt.Println("Available tasks: ")
 	// Display numbered options
 	for i, option := range availablePatches {
 		fmt.Printf("%d. %s\n", i+1, option)
@@ -130,5 +135,29 @@ func checkArControlVersion() {
 		coloredOutput("good", "Your version of Arc Control has been tested with ArcPatcher", nil)
 	} else {
 		coloredOutput("warning", "Your version of Arc Control has not been tested with ArcPatcher", nil)
+	}
+}
+
+// Based on the gist here: https://gist.github.com/jerblack/d0eb182cc5a1c1d92d92a4c4fcc416c6
+func escalateIfNotAdmin() {
+	if !windows.GetCurrentProcessToken().IsElevated() {
+		exe, _ := os.Executable()
+		cwd, _ := os.Getwd()
+		args := strings.Join(os.Args[1:], " ")
+
+		verbPtr, _ := syscall.UTF16PtrFromString("runas")
+		exePtr, _ := syscall.UTF16PtrFromString(exe)
+		cwdPtr, _ := syscall.UTF16PtrFromString(cwd)
+		argPtr, _ := syscall.UTF16PtrFromString(args)
+
+		var showCmd int32 = 1 //SW_NORMAL
+
+		err := windows.ShellExecute(0, verbPtr, exePtr, argPtr, cwdPtr, showCmd)
+		if err != nil {
+			coloredOutput("error", "ArcPatcher requires administrator rights in order to function correctly", nil)
+			coloredOutput("warning", "This error occured while attempting to launch ArcPatcher with administrator rights: ", err)
+		} else {
+			os.Exit(0)
+		}
 	}
 }
