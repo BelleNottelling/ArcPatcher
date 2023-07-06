@@ -22,4 +22,4 @@ A handy utility to patch Intel's "Arc Control" to make it better.
 4. Re-launch Arc Control and enjoy the patches!
 
 ## License
-ArcPatcher is licensed under the [Apache License 2.0](https://github.com/BelleNottelling/ArcPatcher/blob/main/LICENSE) license.
+ArcPatcher is licensed under the [Apache 2.0](https://github.com/BelleNottelling/ArcPatcher/blob/main/LICENSE) license.

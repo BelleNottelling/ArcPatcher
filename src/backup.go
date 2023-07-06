@@ -95,6 +95,6 @@ func restoreBackup() error {
 		}
 	}
 
-	fmt.Println("Backup restoed.")
+	fmt.Println("Backup restored.")
 	return nil
 }
