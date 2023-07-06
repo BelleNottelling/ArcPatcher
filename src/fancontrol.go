@@ -42,10 +42,11 @@ func patchFanControlHTML() error {
 		return err
 	}
 
+	// Remove the "blockout" as it doesn't really provide a purpose and the positioning get's messed up
 	doc.Find("#fan-speed-graph-blockout").Remove()
-	canvas := doc.Find("#fan-speed-graph-dragable")
 
 	// Update the height of the canvas to give it more space
+	canvas := doc.Find("#fan-speed-graph-dragable")
 	if canvas.Length() == 0 {
 		return fmt.Errorf("canvas element not found")
 	}
@@ -71,6 +72,7 @@ func patchfanControlConfig() error {
 		return err
 	}
 
+	// Find the old 'x' axis configuration and replace it with the new one that includes the ticks & that calculates the correct tempature
 	pattern := `x: {\s*display: false,\s*grid: {\s*display: false,\s*},\s*ticks: {\s*color: energyBlue,\s*},\s*},`
 	replacement := `x: {
         display: true,
@@ -98,7 +100,6 @@ func patchfanControlConfig() error {
         },
       },`
 
-	// Perform the replacement using regular expressions
 	re := regexp.MustCompile(pattern)
 	modifiedchartJSConf := re.ReplaceAllString(string(chartJSConf), replacement)
 
@@ -116,15 +117,16 @@ func patchfanControlPerformanceJS() error {
 		return err
 	}
 
+	// Replace the chart initialization code with the custom one that updates it to have more fan curve points
 	pattern := `/if \(isEmpty\(activeOverclockingSettings\(\)\?\.fan_speed_table\)\) {\s*activeOverclockingSettings\(\)\.fan_speed_table = \[30, 30, 40, 55, 75, 90];\s*}/gm`
 	replacement := `if (isEmpty(activeOverclockingSettings()?.fan_speed_table) || activeOverclockingSettings()?.fan_speed_table?.length <= 6) {
 		activeOverclockingSettings().fan_speed_table = [30, 30, 30, 30, 30, 55, 65, 75, 82.5, 90]; //[30, 30, 40, 55, 75, 90]
 		}`
 
-	// Perform the replacement using regular expressions
 	re := regexp.MustCompile(pattern)
 	modified := re.ReplaceAllString(string(performanceJS), replacement)
 
+	// Remove the now redundant tempature lables.
 	modified = strings.Replace(modified, "document.getElementById('fan-graph-x-max').innerHTML = 100 + getTranslationFromId('units-celsius');", "", 1)
 	modified = strings.Replace(modified, "document.getElementById('fan-graph-x-min').innerHTML = 25 + getTranslationFromId('units-celsius');", "", 1)
 

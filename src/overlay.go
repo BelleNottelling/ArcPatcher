@@ -28,9 +28,9 @@ func minimalOverlayJS() error {
 		return err
 	}
 
+	// Find the Overlay's li template and replace it with one that has reduced padding
 	pattern := `<li\s*id="\${setting\?\.settingId}-wrapper"\s*class="\${hidden\s*\?\s*'is-hidden'\s*:\s*''}">`
 
-	// Perform the replacement using regular expressions
 	re := regexp.MustCompile(pattern)
 	modifiedOverlayJS := re.ReplaceAllString(string(content), `<li id="${setting?.settingId}-wrapper" class="${hidden ? 'is-hidden' : ''}" style="margin: 0; padding: 0.25em;">`)
 
@@ -48,12 +48,12 @@ func minimalOverlayHTML() error {
 		return err
 	}
 
-	// Load the HTML document
 	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(overlayHtmlBytes))
 	if err != nil {
 		return err
 	}
 
+	// Removes the "Intel® Performance Telemetry" header
 	doc.Find(".header").Remove()
 
 	updatedHTML, err := doc.Html()

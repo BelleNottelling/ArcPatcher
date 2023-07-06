@@ -11,19 +11,29 @@ func perfBoostSliderMhz() error {
 		return err
 	}
 
-	pattern := `range: {\s*normalize: true,\s*min: activePerformanceAdapter\(\)\?\.supported_oc_features\?\.gpu_performance_boost\?\.min,\s*max: activePerformanceAdapter\(\)\?\.supported_oc_features\?\.gpu_performance_boost\?\.max,\s*step: activePerformanceAdapter\(\)\?\.supported_oc_features\?\.gpu_performance_boost\?\.step,\s*defaultValue: activePerformanceAdapter\(\)\?\.supported_oc_features\?\.gpu_performance_boost\?\.default,\s*units: null,\s*}`
-	replacement := `range: {
-		normalize: false,
-		min: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.min,
-		max: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.max,
-		step: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.step,
-		defaultValue: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.default,
-		units: 'units-mhz',
-	}`
+	// First we enabled the positive / negative indicator
+	pattern := `visible: activePerformanceAdapter\(\)\?\.supported_oc_features\?\.gpu_performance_boost\?\.bSupported,`
+	replacement := `visible: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.bSupported,
+	showPosNeg: true,`
 
-	// Perform the replacement using regular expressions
 	re := regexp.MustCompile(pattern)
 	modified := re.ReplaceAllString(string(performanceJS), replacement)
+
+	// Then we disable the "normalize" option so that it is no longer displayed as a percentage
+	pattern = `normalize: true,\s*min: activePerformanceAdapter\(\)\?\.supported_oc_features\?\.gpu_performance_boost\?\.min,`
+	replacement = `normalize: false,
+	min: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.min,`
+
+	re = regexp.MustCompile(pattern)
+	modified = re.ReplaceAllString(modified, replacement)
+
+	// Finally, set it to display the MHz unit
+	pattern = `defaultValue: activePerformanceAdapter\(\)\?\.supported_oc_features\?\.gpu_performance_boost\?\.default,\s*units: null,`
+	replacement = `defaultValue: activePerformanceAdapter()?.supported_oc_features?.gpu_performance_boost?.default,
+    units: 'units-mhz',`
+
+	re = regexp.MustCompile(pattern)
+	modified = re.ReplaceAllString(modified, replacement)
 
 	err = os.WriteFile(performanceTuningJS, []byte(modified), 0644)
 	if err != nil {

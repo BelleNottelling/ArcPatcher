@@ -27,7 +27,7 @@ var availablePatches = []string{
 	"Improved fan control",
 	"Remove driver update timeout notification",
 	"Minimal overlay",
-	"Show Mhz on the performance boost slider",
+	"Show MHz on the performance boost slider",
 }
 
 func main() {
