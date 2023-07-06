@@ -25,7 +25,7 @@ jobs:
     - name: Build
       working-directory: src
       run: |
-        go build -v -o ArcPatcher.exe
+        go build -v -o ArcPatcher.exe -ldflags="-s -w" -trimpath
     
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
