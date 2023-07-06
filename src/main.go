@@ -8,12 +8,12 @@ import (
 )
 
 var (
-	indexHtml            = `C:\Program Files\Intel\Intel Arc Control\resource\index.html`
-	overlayHtml          = `C:\Program Files\Intel\Intel Arc Control\resource\overlay.html`
-	fanChartConfig       = `C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\chart_configs\\charts.js`
-	performanceTurningJS = `C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\pages\\performance\\performance_tuning.js`
-	updatesJS            = `C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\pages\\drivers\\updates.js`
-	overlayJS            = `C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\overlay.js`
+	indexHtml           = `C:\Program Files\Intel\Intel Arc Control\resource\index.html`
+	overlayHtml         = `C:\Program Files\Intel\Intel Arc Control\resource\overlay.html`
+	fanChartConfig      = `C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\chart_configs\\charts.js`
+	performanceTuningJS = `C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\pages\\performance\\performance_tuning.js`
+	updatesJS           = `C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\pages\\drivers\\updates.js`
+	overlayJS           = `C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\overlay.js`
 )
 
 var availablePatches = []string{
@@ -21,7 +21,7 @@ var availablePatches = []string{
 	"Improved fan control",
 	"Remove driver update timeout notification",
 	"Minimal overlay",
-	"Option 4",
+	"Show Mhz on the performance boost slider",
 }
 
 func main() {
@@ -35,7 +35,7 @@ func main() {
 			coloredOutput(`good`, `Successfully created a backup.`, nil)
 		}
 	} else {
-		coloredOutput(`good`, `Backup already exists, skipping backup step.`, nil)
+		coloredOutput(`warning`, `Backup already exists, skipping backup step.`, nil)
 	}
 
 promt:
@@ -56,12 +56,17 @@ promt:
 		err = removeDriverTimeoutNotification()
 	case 4:
 		err = patchMinimalOverlay()
+	case 5:
+		err = perfBoostSliderMhz()
 	default:
 		coloredOutput(`warning`, `Unknown option selected.`, nil)
+		goto promt
 	}
 
 	if err != nil {
 		coloredOutput(`error`, `Error:`, err)
+	} else {
+		coloredOutput(`good`, `Patch applied without any errors.`, nil)
 	}
 
 	goto promt
@@ -79,7 +84,7 @@ func promtOptions() (int, error) {
 	var choice int
 	_, err := fmt.Scanln(&choice)
 	if err != nil {
-		fmt.Println("Invalid input. Please enter a valid number.")
+		coloredOutput(`warning`, `Invalid input. Please enter a valid number.`, nil)
 		return 0, err
 	}
 

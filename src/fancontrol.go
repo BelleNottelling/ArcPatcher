@@ -111,7 +111,7 @@ func patchfanControlConfig() error {
 }
 
 func patchfanControlPerformanceJS() error {
-	performanceJS, err := os.ReadFile(performanceTurningJS)
+	performanceJS, err := os.ReadFile(performanceTuningJS)
 	if err != nil {
 		return err
 	}
@@ -128,7 +128,7 @@ func patchfanControlPerformanceJS() error {
 	modified = strings.Replace(modified, "document.getElementById('fan-graph-x-max').innerHTML = 100 + getTranslationFromId('units-celsius');", "", 1)
 	modified = strings.Replace(modified, "document.getElementById('fan-graph-x-min').innerHTML = 25 + getTranslationFromId('units-celsius');", "", 1)
 
-	err = os.WriteFile(fanChartConfig, []byte(modified), 0644)
+	err = os.WriteFile(performanceTuningJS, []byte(modified), 0644)
 	if err != nil {
 		return err
 	}
