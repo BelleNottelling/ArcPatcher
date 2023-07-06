@@ -6,6 +6,7 @@ import (
 
 var (
 	indexHtml            = `C:\Program Files\Intel\Intel Arc Control\resource\index.html`
+	overlayHtml          = `C:\Program Files\Intel\Intel Arc Control\resource\overlay.html`
 	fanChartConfig       = `C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\chart_configs\\charts.js`
 	performanceTurningJS = `C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\pages\\performance\\performance_tuning.js`
 	updatesJS            = `C:\\Program Files\\Intel\\Intel Arc Control\\resource\\js\\pages\\drivers\\updates.js`
@@ -32,16 +33,18 @@ promt:
 	switch selection {
 	case 1:
 		err = betterFanControl()
-		if err != nil {
-			fmt.Println("Error:", err)
-		}
 	case 2:
-		removeDriverTimeoutNotification()
+		err = removeDriverTimeoutNotification()
 	case 3:
-		minimalOverlayJS()
+		err = patchMinimalOverlay()
 	default:
 		fmt.Println("Unknown option selected.")
 	}
+
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+
 	goto promt
 }
 

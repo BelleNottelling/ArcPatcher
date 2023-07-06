@@ -62,19 +62,6 @@ func patchFanControlHTML() error {
 		return err
 	}
 
-	// Now remove the 25C and 100C labels
-	performanceJS, err := os.ReadFile(performanceTurningJS)
-	if err != nil {
-		return err
-	}
-
-	modifiedperformanceJS := strings.Replace(string(performanceJS), "document.getElementById('fan-graph-x-max').innerHTML = 100 + getTranslationFromId('units-celsius');", "", 1)
-	modifiedperformanceJS = strings.Replace(modifiedperformanceJS, "document.getElementById('fan-graph-x-min').innerHTML = 25 + getTranslationFromId('units-celsius');", "", 1)
-	err = os.WriteFile(performanceTurningJS, []byte(modifiedperformanceJS), 0644)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -137,6 +124,9 @@ func patchfanControlPerformanceJS() error {
 	// Perform the replacement using regular expressions
 	re := regexp.MustCompile(pattern)
 	modified := re.ReplaceAllString(string(performanceJS), replacement)
+
+	modified = strings.Replace(modified, "document.getElementById('fan-graph-x-max').innerHTML = 100 + getTranslationFromId('units-celsius');", "", 1)
+	modified = strings.Replace(modified, "document.getElementById('fan-graph-x-min').innerHTML = 25 + getTranslationFromId('units-celsius');", "", 1)
 
 	err = os.WriteFile(fanChartConfig, []byte(modified), 0644)
 	if err != nil {
