@@ -26,3 +26,9 @@ jobs:
       working-directory: src
       run: |
         go build -v ./...
+    
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        path: src/ArcPatcher.exe
+        name: ArcPatcher.exe
