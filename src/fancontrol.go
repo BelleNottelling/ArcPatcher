@@ -118,7 +118,7 @@ func patchfanControlPerformanceJS() error {
 	}
 
 	// Replace the chart initialization code with the custom one that updates it to have more fan curve points
-	pattern := `/if \(isEmpty\(activeOverclockingSettings\(\)\?\.fan_speed_table\)\) {\s*activeOverclockingSettings\(\)\.fan_speed_table = \[30, 30, 40, 55, 75, 90];\s*}/gm`
+	pattern := `/if \(isEmpty\(activeOverclockingSettings\(\)\?\.fan_speed_table\)\) {\s*activeOverclockingSettings\(\)\.fan_speed_table = \[30, 30, 40, 55, 75, 90];\s*}`
 	replacement := `if (isEmpty(activeOverclockingSettings()?.fan_speed_table) || activeOverclockingSettings()?.fan_speed_table?.length <= 6) {
 		activeOverclockingSettings().fan_speed_table = [30, 30, 30, 30, 30, 55, 65, 75, 82.5, 90]; //[30, 30, 40, 55, 75, 90]
 		}`
@@ -129,6 +129,15 @@ func patchfanControlPerformanceJS() error {
 	// Remove the now redundant tempature lables.
 	modified = strings.Replace(modified, "document.getElementById('fan-graph-x-max').innerHTML = 100 + getTranslationFromId('units-celsius');", "", 1)
 	modified = strings.Replace(modified, "document.getElementById('fan-graph-x-min').innerHTML = 25 + getTranslationFromId('units-celsius');", "", 1)
+
+	// Update the reset option so that it also restores the custom fan curve with additional points.
+	pattern = `newTuningSettings = null; \/\/ reset the state so we can make new changes\s*updateOverclockingSettings\(ret\?\.data\);`
+	replacement = `newTuningSettings = null; // reset the state so we can make new changes
+	ret.data.fan_speed_table = [30, 30, 30, 30, 30, 55, 65, 75, 82.5, 90];
+	updateOverclockingSettings(ret?.data);`
+
+	re = regexp.MustCompile(pattern)
+	modified = re.ReplaceAllString(modified, replacement)
 
 	err = os.WriteFile(performanceTuningJS, []byte(modified), 0644)
 	if err != nil {
