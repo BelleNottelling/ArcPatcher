@@ -12,6 +12,9 @@ A handy utility to patch Intel's "Arc Control" to make it better.
 - Driver update timeout notification removal
 - Performance boost display MHz
     - This patch changes the performance boost slider to display the actual MHz offset you are applying rather than displaying it as a percentage. (Default is a percentage of the possible MHz offset, which is typically 300Mhz for the A770 / A750)
+- Arc Control Bug Fixes
+	- A generic patch that will encopmas any Arc Control bugs I've created fixes for.
+	- Fixes `applyPerformanceTuning does not update performance sliders`
 
 
 ## Usage
@@ -22,4 +25,4 @@ A handy utility to patch Intel's "Arc Control" to make it better.
 4. Re-launch Arc Control and enjoy the patches!
 
 ## License
-ArcPatcher is licensed under the [Apache 2.0](https://github.com/BelleNottelling/ArcPatcher/blob/main/LICENSE) license.
+ArcPatcher is licensed under the [Apache 2.0](https://github.com/BelleNottelling/ArcPatcher/blob/main/LICENSE) license and comes under no warrenty.
