@@ -31,6 +31,7 @@ var availablePatches = []string{
 	"Remove driver update timeout notification",
 	"Minimal overlay",
 	"Show MHz on the performance boost slider",
+	"Fix Arc Control Bugs",
 }
 
 func main() {
@@ -71,6 +72,8 @@ promt:
 		err = patchMinimalOverlay()
 	case 5:
 		err = perfBoostSliderMhz()
+	case 6:
+		err = fixArcControlBugs()
 	default:
 		coloredOutput(`warning`, `Unknown option selected.`, nil)
 		goto promt
