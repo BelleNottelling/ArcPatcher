@@ -1,3 +1,7 @@
+# Archived 7-13-2023
+After 4 months of dealing with lots of small and annoying issues which really shouldn't exist & being disappointed in Intel's support, I am selling my A770 and I do not wish to own another Intel GPU anytime soon.
+This patcher will be archived and will not be getting any updates from me, although other people are welcome to make a fork of it and continue to update it.
+
 # ArcPatcher
 A handy utility to patch Intel's "Arc Control" to make it better.
 
